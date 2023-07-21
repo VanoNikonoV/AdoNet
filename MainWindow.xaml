@@ -1,0 +1,50 @@
+﻿<Window x:Class="AdoNet.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdoNet"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d" 
+        Title="Task 1" Height="300" Width="700"
+        Loaded="LoadAuthorizationWindow">
+    <StackPanel Orientation="Vertical" Background="#FFDADADA">
+       
+        <TextBox x:Name="ConnectionString1" 
+                 materialDesign:HintAssist.Hint="Строка подключения SQL Server" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 MaxWidth="600"
+                 TextWrapping="Wrap" 
+                 FontSize="14" 
+                 HorizontalContentAlignment="Center"/>
+
+        <TextBox x:Name="Status1"
+                 materialDesign:HintAssist.Hint="Статус подключения SQL Server" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 MaxWidth="600"
+                 TextWrapping="Wrap" 
+                 FontSize="14" 
+                 HorizontalContentAlignment="Center"/>
+        <Line Margin="0 10 0 30"
+                X1="0" Y1="0"
+                X2="700" Y2="0"
+                Stroke="Red"
+                StrokeThickness="6" />  
+
+        <TextBox x:Name="ConnectionString2"
+                 materialDesign:HintAssist.Hint="Строка подключения MS Access" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 MaxWidth="600"
+                 TextWrapping="Wrap" 
+                 FontSize="14" 
+                 HorizontalContentAlignment="Center"/>
+
+        <TextBox x:Name="Status2"
+                 materialDesign:HintAssist.Hint="Статус подключения MS Access" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 MaxWidth="600"
+                 TextWrapping="Wrap" 
+                 FontSize="14" 
+                 HorizontalContentAlignment="Center"/>
+    </StackPanel>
+</Window>
