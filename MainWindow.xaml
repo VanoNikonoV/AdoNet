@@ -6,45 +6,19 @@
         xmlns:local="clr-namespace:AdoNet"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d" 
-        Title="Task 1" Height="300" Width="700"
+        Title="Task 2" Height="300" Width="700"
         Loaded="LoadAuthorizationWindow">
-    <StackPanel Orientation="Vertical" Background="#FFDADADA">
-       
-        <TextBox x:Name="ConnectionString1" 
-                 materialDesign:HintAssist.Hint="Строка подключения SQL Server" 
-                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 MaxWidth="600"
-                 TextWrapping="Wrap" 
-                 FontSize="14" 
-                 HorizontalContentAlignment="Center"/>
-
-        <TextBox x:Name="Status1"
-                 materialDesign:HintAssist.Hint="Статус подключения SQL Server" 
-                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 MaxWidth="600"
-                 TextWrapping="Wrap" 
-                 FontSize="14" 
-                 HorizontalContentAlignment="Center"/>
-        <Line Margin="0 10 0 30"
-                X1="0" Y1="0"
-                X2="700" Y2="0"
-                Stroke="Red"
-                StrokeThickness="6" />  
-
-        <TextBox x:Name="ConnectionString2"
-                 materialDesign:HintAssist.Hint="Строка подключения MS Access" 
-                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 MaxWidth="600"
-                 TextWrapping="Wrap" 
-                 FontSize="14" 
-                 HorizontalContentAlignment="Center"/>
-
-        <TextBox x:Name="Status2"
-                 materialDesign:HintAssist.Hint="Статус подключения MS Access" 
-                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 MaxWidth="600"
-                 TextWrapping="Wrap" 
-                 FontSize="14" 
-                 HorizontalContentAlignment="Center"/>
-    </StackPanel>
+    <Grid>
+        <DataGrid x:Name="gridView"
+                  IsSynchronizedWithCurrentItem="True"
+                  SelectionMode="Single" 
+                  AutoGenerateColumns="False" 
+                  ItemsSource="{Binding}"
+                  IsReadOnly="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn x:Name="id"
+                                    Binding="{Binding id_user}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
 </Window>
