@@ -9,9 +9,17 @@ namespace AdoNet
 {
     public partial class AuthorizationWindow : Window
     {
+        SqlDataAdapter sqlDataAdapter;
+
+        DataTable table;
+
         public AuthorizationWindow()
         {
             InitializeComponent();
+
+            sqlDataAdapter = new SqlDataAdapter();
+
+            table = new DataTable();
         }
 
         private void Button_Click_Enter(object sender, RoutedEventArgs e)
@@ -28,10 +36,6 @@ namespace AdoNet
                     connection.Open();
 
                     SqlCommand command = new SqlCommand(querystring, connection);
-
-                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
-                    
-                    DataTable table = new DataTable();
 
                     sqlDataAdapter.SelectCommand = command;
 
@@ -73,7 +77,7 @@ namespace AdoNet
 
                         SqlCommand command = new SqlCommand(querystring, connection);
 
-                        Debug.WriteLine( command.ExecuteNonQuery());
+                        int w = command.ExecuteNonQuery();
 
                         this.DialogResult = true;
 
