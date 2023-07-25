@@ -20,6 +20,7 @@ namespace AdoNet
 
         DataSet customerOrders;
 
+
         public MainWindow()
         {
             custAdapter = new SqlDataAdapter();
@@ -30,10 +31,11 @@ namespace AdoNet
 
             customerOrders = new DataSet();
 
+
             InitializeComponent(); 
         }
 
-        public async Task ConnectionTry()
+        public async Task Connection()
         {
             string connectionString =
                 ConfigurationManager.ConnectionStrings["sql"].ConnectionString;
@@ -52,7 +54,7 @@ namespace AdoNet
 
                     custAdapter.Fill(customerOrders, "customers");
 
-                    gridView.DataContext = customerOrders.Tables[0];
+                    //gridView.DataContext = customerOrders.Tables[0];
                 }
                 catch (Exception e)
                 {
@@ -63,6 +65,9 @@ namespace AdoNet
                     Debug.WriteLine("Done");
                 }
             }
+
+            Debug.WriteLine(customerOrders.Tables[0].TableName);
+            
 
             string connectionString2 =
                 ConfigurationManager.ConnectionStrings["MSAccess"].ConnectionString;
@@ -90,10 +95,20 @@ namespace AdoNet
                     Debug.WriteLine("Done");
                 }
             }
+            DataRelation relation = customerOrders.Relations.Add("CustOrders",
+                customerOrders.Tables["customers"].Columns[5],   //customerOrders.Tables[0].Columns[5],
+                customerOrders.Tables["orders"].Columns[1]); //    customerOrders.Tables[1].Columns[1]);
 
-            //DataRelation relation = customerOrders.Relations.Add("CustOrders",
-            //    customerOrders.Tables["Customers"].Columns["CustomerID"],
-            //    customerOrders.Tables["Orders"].Columns["CustomerID"]);
+
+            gridView.DataContext = relation.DataSet.Tables[0];
+
+            //foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
+            //{
+            //    Debug.WriteLine(pRow["e_mail"]);
+            //    foreach (DataRow cRow in pRow.GetChildRows(relation))
+            //        Debug.WriteLine("\t" + cRow[1]);
+            //}
+
         }
 
 
@@ -108,7 +123,7 @@ namespace AdoNet
 
             if (AuthorizationWindow.DialogResult == true)
             {
-                ConnectionTry();
+                Connection();
                
             }
             else { this.Close(); }
