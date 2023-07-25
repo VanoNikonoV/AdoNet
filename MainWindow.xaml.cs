@@ -53,8 +53,6 @@ namespace AdoNet
                     custAdapter.SelectCommand = command;
 
                     custAdapter.Fill(customerOrders, "customers");
-
-                    //gridView.DataContext = customerOrders.Tables[0];
                 }
                 catch (Exception e)
                 {
@@ -65,9 +63,6 @@ namespace AdoNet
                     Debug.WriteLine("Done");
                 }
             }
-
-            Debug.WriteLine(customerOrders.Tables[0].TableName);
-            
 
             string connectionString2 =
                 ConfigurationManager.ConnectionStrings["MSAccess"].ConnectionString;
@@ -102,12 +97,12 @@ namespace AdoNet
 
             gridView.DataContext = relation.DataSet.Tables[0];
 
-            //foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
-            //{
-            //    Debug.WriteLine(pRow["e_mail"]);
-            //    foreach (DataRow cRow in pRow.GetChildRows(relation))
-            //        Debug.WriteLine("\t" + cRow[1]);
-            //}
+            foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
+            {
+                Debug.WriteLine(pRow["e_mail"]);
+                foreach (DataRow cRow in pRow.GetChildRows(relation))
+                    Debug.WriteLine("\t" + cRow[1]);
+            }
 
         }
 
