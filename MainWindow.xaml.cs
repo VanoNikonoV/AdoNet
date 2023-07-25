@@ -5,31 +5,54 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Configuration;
 using System.Diagnostics;
+using System.Data;
 
 namespace AdoNet
 {
 
     public partial class MainWindow : Window
     {
+        SqlDataAdapter custAdapter;
+
+        OleDbDataAdapter ordAdapter;
+
+        DataTable table;
+
+        DataSet customerOrders;
+
         public MainWindow()
         {
+            custAdapter = new SqlDataAdapter();
+
+            ordAdapter = new OleDbDataAdapter();
+
+            table = new DataTable();
+
+            customerOrders = new DataSet();
+
             InitializeComponent(); 
         }
 
-        public async Task ConnectionSql()
+        public async Task ConnectionTry()
         {
             string connectionString =
                 ConfigurationManager.ConnectionStrings["sql"].ConnectionString;
 
-            using (SqlConnection connection = new SqlConnection(connectionString)) // strConnection.ConnectionString
+            string querySelect = $"select * FROM customers"; //Order By customers.id
+
+            using (SqlConnection customerConnection = new SqlConnection(connectionString)) // strConnection.ConnectionString
             {
                 try
                 {
-                    await connection.OpenAsync();
+                    await customerConnection.OpenAsync();
 
-                    this.ConnectionString1.Text = connection.ConnectionString;
+                    SqlCommand command = new SqlCommand(querySelect, customerConnection);
 
-                    this.Status1.Text = $@"{nameof(connection)} в состоянии:" + $" {connection.State}";
+                    custAdapter.SelectCommand = command;
+
+                    custAdapter.Fill(customerOrders, "customers");
+
+                    gridView.DataContext = customerOrders.Tables[0];
                 }
                 catch (Exception e)
                 {
@@ -40,22 +63,23 @@ namespace AdoNet
                     Debug.WriteLine("Done");
                 }
             }
-        }
 
-        public async Task ConnectionAccess()
-        {
             string connectionString2 =
                 ConfigurationManager.ConnectionStrings["MSAccess"].ConnectionString;
 
-            using (OleDbConnection connection = new OleDbConnection(connectionString2)) 
+            querySelect = $"select * FROM orders";
+
+            using (OleDbConnection orderConnection = new OleDbConnection(connectionString2))
             {
                 try
                 {
-                    await connection.OpenAsync();
+                    await orderConnection.OpenAsync();
 
-                    this.ConnectionString2.Text = connection.ConnectionString;
+                    OleDbCommand command = new OleDbCommand(querySelect, orderConnection);
 
-                    this.Status2.Text = $@"{nameof(connection)} в состоянии:" + $" {connection.State}";
+                    ordAdapter.SelectCommand = command;
+
+                    ordAdapter.Fill(customerOrders, "orders");
                 }
                 catch (Exception e)
                 {
@@ -66,7 +90,13 @@ namespace AdoNet
                     Debug.WriteLine("Done");
                 }
             }
+
+            //DataRelation relation = customerOrders.Relations.Add("CustOrders",
+            //    customerOrders.Tables["Customers"].Columns["CustomerID"],
+            //    customerOrders.Tables["Orders"].Columns["CustomerID"]);
         }
+
+
 
         private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
         {
@@ -78,8 +108,8 @@ namespace AdoNet
 
             if (AuthorizationWindow.DialogResult == true)
             {
-                ConnectionSql();
-                ConnectionAccess();
+                ConnectionTry();
+               
             }
             else { this.Close(); }
         }

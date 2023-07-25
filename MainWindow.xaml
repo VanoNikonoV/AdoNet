@@ -17,7 +17,29 @@
                   IsReadOnly="False">
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="id"
-                                    Binding="{Binding id_user}"/>
+                                    Binding="{Binding id_user}"
+                                    Header="ID"
+                                    IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="surname"
+                                    Binding="{Binding surname}"
+                                    Header="Фамилия"
+                                    IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="name"
+                                    Binding="{Binding name}"
+                                    Header="Имя"
+                                    IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="patronymic"
+                                    Binding="{Binding patronymic}"
+                                    Header="Отчество"
+                                    IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="telefon"
+                                    Binding="{Binding telefon}"
+                                    Header="Телефон"
+                                    IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="e_mail"
+                                    Binding="{Binding e_mail}"
+                                    Header="E-mail"
+                                    IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
