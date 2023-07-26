@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AdoNet"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d" 
-        Title="Task 2" Height="300" Width="700"
+        Title="Task 2" Height="500" Width="710"
         Loaded="LoadAuthorizationWindow">
     <Grid>
         <DataGrid x:Name="gridView"
@@ -19,28 +19,35 @@
                 <DataGridTextColumn x:Name="id"
                                     Binding="{Binding id_user}"
                                     Header="ID"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True" 
+                                    Width="60"/>
                 <DataGridTextColumn x:Name="surname"
                                     Binding="{Binding surname}"
                                     Header="Фамилия"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True" 
+                                    Width="120"/>
                 <DataGridTextColumn x:Name="name"
                                     Binding="{Binding name}"
                                     Header="Имя"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True"
+                                    Width="100"/>
                 <DataGridTextColumn x:Name="patronymic"
                                     Binding="{Binding patronymic}"
                                     Header="Отчество"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True"
+                                    Width="150"/>
                 <DataGridTextColumn x:Name="telefon"
                                     Binding="{Binding telefon}"
                                     Header="Телефон"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True"
+                                    Width="120"/>
                 <DataGridTextColumn x:Name="e_mail"
                                     Binding="{Binding e_mail}"
                                     Header="E-mail"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True"
+                                    Width="150"/>
             </DataGrid.Columns>
+            
         </DataGrid>
     </Grid>
 </Window>

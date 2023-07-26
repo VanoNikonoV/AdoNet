@@ -106,8 +106,6 @@ namespace AdoNet
 
         }
 
-
-
         private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
         {
             var AuthorizationWindow = new AuthorizationWindow();
@@ -119,7 +117,6 @@ namespace AdoNet
             if (AuthorizationWindow.DialogResult == true)
             {
                 Connection();
-               
             }
             else { this.Close(); }
         }
