@@ -6,10 +6,127 @@
         xmlns:local="clr-namespace:AdoNet"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d" 
-        Title="Task 2" Height="500" Width="710"
-        Loaded="LoadAuthorizationWindow">
+        Title="Task 2" Height="500" Width="1000"
+        Loaded="LoadAuthorizationWindow" Background="#FFDADADA">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="35"/>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Vertical"
+                    Grid.Column="0">
+
+            <Button VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    IsDefault="True"
+                    Width="30" Height="30"
+                    Cursor="Hand" Padding="0" ToolTip="Выборка товаров клиента">
+                <materialDesign:PackIcon Kind="SelectSearch" 
+                                             Width="25" Height="25" 
+                                             HorizontalAlignment="Center" 
+                                             VerticalAlignment="Center" 
+                                             Foreground="#FF71B73A"/>
+            </Button>
+            
+            <Button VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    IsDefault="True"
+                    Width="30" Height="30"
+                    Margin="0 5"
+                    Cursor="Hand" 
+                    Padding="0" 
+                    ToolTip="Добавить клиента">
+                <materialDesign:PackIcon Kind="AccountPlusOutline" 
+                                             Width="25" Height="25" 
+                                             HorizontalAlignment="Center" 
+                                             VerticalAlignment="Center" 
+                                             Foreground="#FF71B73A"/>
+            </Button>
+            
+            <Button VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    IsDefault="True"
+                    Width="30" Height="30"
+                    Cursor="Hand" 
+                    Margin="0 5"
+                    Padding="0" 
+                    ToolTip="Добавить товар для выбранного клиента">
+                <materialDesign:PackIcon Kind="AddCircleOutline" 
+                                             Width="25" Height="25" 
+                                             HorizontalAlignment="Center" 
+                                             VerticalAlignment="Center" 
+                                             Foreground="#FF226DE7"/>
+            </Button>
+
+            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" 
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    IsCancel="True" 
+                    Cursor="Hand"
+                    Width="30" Height="30"
+                    Padding="0"
+                    Margin="0 5" 
+                    ToolTip="Очистка таблиц">
+                <materialDesign:PackIcon Kind="CloseOutline" 
+                                         Width="25" Height="25" 
+                                         HorizontalAlignment="Center" 
+                                         VerticalAlignment="Center" 
+                                         Foreground="#FFB73A51"/>
+            </Button>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical"
+                    Grid.Column="1"
+                    Margin="0 0 10 0">
+            <TextBox x:Name="NameTextBox" 
+                 materialDesign:HintAssist.Hint="Имя клиента" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 Margin="5 5"/>
+            <TextBox x:Name="SurNameTextBox" 
+                 materialDesign:HintAssist.Hint="Фамилая клиента" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 Margin="5 5"/>
+            <TextBox x:Name="PatronymicTextBox" 
+                 materialDesign:HintAssist.Hint="Отчество клиента" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 Margin="5 5"/>
+            <TextBox x:Name="TelefonTextBox" 
+                 materialDesign:HintAssist.Hint="Номер телефона" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 Margin="5 5"/>
+            <TextBox x:Name="E_mailTextBox" 
+                 materialDesign:HintAssist.Hint="e-mail" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 Margin="5 5"/>
+            <Button VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Right"
+                    IsDefault="True"
+                    Width="60" Height="30"
+                    Cursor="Hand" 
+                    ToolTip="Подтвердить изменения">
+                <materialDesign:PackIcon Kind="Edit" 
+                                         Width="25" Height="25" 
+                                         HorizontalAlignment="Center" 
+                                         VerticalAlignment="Center" 
+                                         Foreground="#FF71B73A"/>
+            </Button>
+
+        </StackPanel>
+
+        <Border Grid.Column="2" 
+                Background ="White" 
+                CornerRadius="25"
+                Margin="5">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="50" Color="Green" ShadowDepth="0"/>
+            </Border.Effect>
+        
         <DataGrid x:Name="gridView"
+                  Margin="10"
                   IsSynchronizedWithCurrentItem="True"
                   SelectionMode="Single" 
                   AutoGenerateColumns="False" 
@@ -45,9 +162,19 @@
                                     Binding="{Binding e_mail}"
                                     Header="E-mail"
                                     IsReadOnly="True"
-                                    Width="150"/>
+                                    Width="130"/>
             </DataGrid.Columns>
-            
-        </DataGrid>
+
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Добавить" />
+                                  <!--Click="MenuItemAddClick"-->
+                        <MenuItem Header="Удалить" />
+                                  <!--Click="MenuItemDeleteClick"-->
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+
+            </DataGrid>
+        </Border>
     </Grid>
 </Window>
