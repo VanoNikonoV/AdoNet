@@ -90,16 +90,18 @@ namespace AdoNet
                     Debug.WriteLine("Done");
                 }
             }
-            DataRelation relation = customerOrders.Relations.Add("CustOrders",
+            customerOrders.Relations.Add("CustOrders",
                 customerOrders.Tables["customers"].Columns["e_mail"],   //customerOrders.Tables[0].Columns[5],
                 customerOrders.Tables["orders"].Columns["e_mail"]);     //customerOrders.Tables[1].Columns[1]);
 
-            gridView.DataContext = relation.DataSet.Tables[0];
+            gridView.DataContext = customerOrders.Tables[0];
+
+            table = customerOrders.Tables[0];
 
             foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
             {
                 //Debug.WriteLine(pRow["e_mail"]);
-                foreach (DataRow cRow in pRow.GetChildRows(relation))
+                foreach (DataRow cRow in pRow.GetChildRows(customerOrders.Relations[0]))
                     Debug.WriteLine("\t" + cRow[1]);
             }
 
