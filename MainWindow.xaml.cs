@@ -20,6 +20,8 @@ namespace AdoNet
 
         DataSet customerOrders;
 
+        DataRowView row;
+
         public MainWindow()
         {
             custAdapter = new SqlDataAdapter();
@@ -33,76 +35,95 @@ namespace AdoNet
             InitializeComponent();
 
             Connection();
+     
         }
+
+  
 
         public async Task Connection()
         {
-            string connectionString =
-                ConfigurationManager.ConnectionStrings["sql"].ConnectionString;
-
-            string querySelect = $"select * FROM customers"; //Order By customers.id
-
-            using (SqlConnection customerConnection = new SqlConnection(connectionString)) // strConnection.ConnectionString
+            SqlConnection customerConnection =
+                new SqlConnection(ConfigurationManager.ConnectionStrings["sql"].ConnectionString);        
+            try
             {
-                try
-                {
-                    await customerConnection.OpenAsync();
+                await customerConnection.OpenAsync();
 
-                    SqlCommand command = new SqlCommand(querySelect, customerConnection);
+                SqlCommand command = new SqlCommand("select * FROM customers", customerConnection);
 
-                    custAdapter.SelectCommand = command;
+                custAdapter.SelectCommand = command;
 
-                    custAdapter.Fill(customerOrders, "customers");
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                }
-                finally
-                {
-                    Debug.WriteLine("Done");
-                }
+                custAdapter.Fill(customerOrders, "customers");
+
+                #region delete
+
+                string sql = "DELETE FROM customers WHERE id_user = @id";
+
+                custAdapter.DeleteCommand = new SqlCommand(sql, customerConnection);
+                custAdapter.DeleteCommand.Parameters.Add("@id", SqlDbType.Int, 4, "id_user");
+
+                #endregion
+
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+            finally
+            {
+                Debug.WriteLine("Done");
             }
 
-            string connectionString2 =
-                ConfigurationManager.ConnectionStrings["MSAccess"].ConnectionString;
 
-            querySelect = $"select * FROM orders";
-
-            using (OleDbConnection orderConnection = new OleDbConnection(connectionString2))
+            OleDbConnection orderConnection =
+                new OleDbConnection(ConfigurationManager.ConnectionStrings["MSAccess"].ConnectionString);
+            
+            try
             {
-                try
-                {
-                    await orderConnection.OpenAsync();
+                await orderConnection.OpenAsync();
 
-                    OleDbCommand command = new OleDbCommand(querySelect, orderConnection);
+                OleDbCommand command = new OleDbCommand("select * FROM orders", orderConnection);
 
-                    ordAdapter.SelectCommand = command;
+                ordAdapter.SelectCommand = command;
 
-                    ordAdapter.Fill(customerOrders, "orders");
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine($"Access " + e.Message);
-                }
-                finally
-                {
-                    Debug.WriteLine("Done");
-                }
+                ordAdapter.Fill(customerOrders, "orders");
             }
-            DataRelation relation = customerOrders.Relations.Add("CustOrders",
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Access " + e.Message);
+            }
+            finally
+            {
+                Debug.WriteLine("Done");
+            }
+            
+
+            customerOrders.Relations.Add("CustOrders",
                 customerOrders.Tables["customers"].Columns["e_mail"],   //customerOrders.Tables[0].Columns[5],
                 customerOrders.Tables["orders"].Columns["e_mail"]);     //customerOrders.Tables[1].Columns[1]);
 
-            gridView.DataContext = relation.DataSet.Tables[0];
+            gridView.DataContext = customerOrders.Tables[0].DefaultView;
 
-            foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
-            {
-                //Debug.WriteLine(pRow["e_mail"]);
-                foreach (DataRow cRow in pRow.GetChildRows(relation))
-                    Debug.WriteLine("\t" + cRow[1]);
-            }
+            
 
+            //foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
+            //{
+            //    //Debug.WriteLine(pRow["e_mail"]);
+            //    foreach (DataRow cRow in pRow.GetChildRows(relation))
+            //        Debug.WriteLine("\t" + cRow[1]);
+            //}
+
+        }
+
+        private void EditCustomerButton(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void DeleteCustomerButton(object sender, RoutedEventArgs e)
+        {
+            row = (DataRowView)gridView.SelectedItem;
+            row.Row.Delete();
+            custAdapter.Update(customerOrders.Tables[0]);
         }
 
         //private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
@@ -119,6 +140,6 @@ namespace AdoNet
         //    }
         //    else { this.Close(); }
         //}
-       
+
     }
 }
