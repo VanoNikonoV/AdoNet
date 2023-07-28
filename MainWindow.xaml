@@ -114,7 +114,8 @@
                     IsDefault="True"
                     Width="60" Height="30"
                     Cursor="Hand" 
-                    ToolTip="Подтвердить изменения">
+                    ToolTip="Подтвердить изменения"
+                    Click="EditCustomerButton">
                 <materialDesign:PackIcon Kind="Edit" 
                                          Width="25" Height="25" 
                                          HorizontalAlignment="Center" 

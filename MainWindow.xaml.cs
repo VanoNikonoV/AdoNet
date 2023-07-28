@@ -20,6 +20,8 @@ namespace AdoNet
 
         DataSet customerOrders;
 
+        DataRowView row;
+
         public MainWindow()
         {
             custAdapter = new SqlDataAdapter();
@@ -29,6 +31,7 @@ namespace AdoNet
             table = new DataTable();
 
             customerOrders = new DataSet();
+
 
             InitializeComponent();
 
@@ -107,20 +110,27 @@ namespace AdoNet
 
         }
 
-        //private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
-        //{
-        //    var AuthorizationWindow = new AuthorizationWindow();
+        private void EditCustomerButton(object sender, RoutedEventArgs e)
+        {
+            row = (DataRowView)gridView.SelectedItem;
+            row.Row.Delete();
+            custAdapter.Update(customerOrders.Tables[0]);
+        }
 
-        //    AuthorizationWindow.Owner = this;
+        private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
+        {
+            var AuthorizationWindow = new AuthorizationWindow();
 
-        //    AuthorizationWindow.ShowDialog();
+            AuthorizationWindow.Owner = this;
 
-        //    if (AuthorizationWindow.DialogResult == true)
-        //    {
-        //        //Connection();
-        //    }
-        //    else { this.Close(); }
-        //}
-       
+            AuthorizationWindow.ShowDialog();
+
+            if (AuthorizationWindow.DialogResult == true)
+            {
+                //Connection();
+            }
+            else { this.Close(); }
+        }
+
     }
 }
