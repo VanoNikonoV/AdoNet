@@ -7,7 +7,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d" 
         Title="Task 2" Height="500" Width="1000"
-        Loaded="LoadAuthorizationWindow" Background="#FFDADADA">
+        Background="#FFDADADA"> <!--Loaded="LoadAuthorizationWindow"-->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="35"/>
@@ -79,29 +79,36 @@
             </Button>
         </StackPanel>
 
-        <StackPanel Orientation="Vertical"
+        <StackPanel Name="СustomerВataPanel"
+                    Orientation="Vertical"
                     Grid.Column="1"
-                    Margin="0 0 10 0">
+                    Margin="0 0 10 0"
+                    DataContext="{Binding ElementName=gridView, Path=SelectedItem}">
             <TextBox x:Name="NameTextBox" 
                  materialDesign:HintAssist.Hint="Имя клиента" 
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 Margin="5 5"/>
+                 Margin="5 5"
+                 Text="{Binding name}"/>
             <TextBox x:Name="SurNameTextBox" 
                  materialDesign:HintAssist.Hint="Фамилая клиента" 
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 Margin="5 5"/>
+                 Margin="5 5"
+                 Text="{Binding surname}"/>
             <TextBox x:Name="PatronymicTextBox" 
                  materialDesign:HintAssist.Hint="Отчество клиента" 
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 Margin="5 5"/>
+                 Margin="5 5"
+                 Text="{Binding patronymic}"/>
             <TextBox x:Name="TelefonTextBox" 
                  materialDesign:HintAssist.Hint="Номер телефона" 
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 Margin="5 5"/>
+                 Margin="5 5"
+                 Text="{Binding telefon}"/>
             <TextBox x:Name="E_mailTextBox" 
                  materialDesign:HintAssist.Hint="e-mail" 
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 Margin="5 5"/>
+                 Margin="5 5"
+                 Text="{Binding e_mail}"/>
             <Button VerticalAlignment="Bottom" 
                     HorizontalAlignment="Right"
                     IsDefault="True"
@@ -176,5 +183,6 @@
 
             </DataGrid>
         </Border>
+        
     </Grid>
 </Window>

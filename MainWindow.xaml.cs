@@ -20,7 +20,6 @@ namespace AdoNet
 
         DataSet customerOrders;
 
-
         public MainWindow()
         {
             custAdapter = new SqlDataAdapter();
@@ -31,8 +30,9 @@ namespace AdoNet
 
             customerOrders = new DataSet();
 
+            InitializeComponent();
 
-            InitializeComponent(); 
+            Connection();
         }
 
         public async Task Connection()
@@ -91,35 +91,34 @@ namespace AdoNet
                 }
             }
             DataRelation relation = customerOrders.Relations.Add("CustOrders",
-                customerOrders.Tables["customers"].Columns[5],   //customerOrders.Tables[0].Columns[5],
-                customerOrders.Tables["orders"].Columns[1]); //    customerOrders.Tables[1].Columns[1]);
-
+                customerOrders.Tables["customers"].Columns["e_mail"],   //customerOrders.Tables[0].Columns[5],
+                customerOrders.Tables["orders"].Columns["e_mail"]);     //customerOrders.Tables[1].Columns[1]);
 
             gridView.DataContext = relation.DataSet.Tables[0];
 
             foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
             {
-                Debug.WriteLine(pRow["e_mail"]);
+                //Debug.WriteLine(pRow["e_mail"]);
                 foreach (DataRow cRow in pRow.GetChildRows(relation))
                     Debug.WriteLine("\t" + cRow[1]);
             }
 
         }
 
-        private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
-        {
-            var AuthorizationWindow = new AuthorizationWindow();
+        //private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
+        //{
+        //    var AuthorizationWindow = new AuthorizationWindow();
 
-            AuthorizationWindow.Owner = this;
+        //    AuthorizationWindow.Owner = this;
 
-            AuthorizationWindow.ShowDialog();
+        //    AuthorizationWindow.ShowDialog();
 
-            if (AuthorizationWindow.DialogResult == true)
-            {
-                Connection();
-            }
-            else { this.Close(); }
-        }
+        //    if (AuthorizationWindow.DialogResult == true)
+        //    {
+        //        //Connection();
+        //    }
+        //    else { this.Close(); }
+        //}
        
     }
 }
