@@ -70,7 +70,8 @@
                     Width="30" Height="30"
                     Padding="0"
                     Margin="0 5" 
-                    ToolTip="Очистка таблиц">
+                    ToolTip="Очистка таблиц"
+                     Click="DeletCustomerButton">
                 <materialDesign:PackIcon Kind="CloseOutline" 
                                          Width="25" Height="25" 
                                          HorizontalAlignment="Center" 
@@ -114,8 +115,7 @@
                     IsDefault="True"
                     Width="60" Height="30"
                     Cursor="Hand" 
-                    ToolTip="Подтвердить изменения"
-                    Click="EditCustomerButton">
+                    ToolTip="Подтвердить изменения">
                 <materialDesign:PackIcon Kind="Edit" 
                                          Width="25" Height="25" 
                                          HorizontalAlignment="Center" 

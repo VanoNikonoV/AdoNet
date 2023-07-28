@@ -32,7 +32,6 @@ namespace AdoNet
 
             customerOrders = new DataSet();
 
-
             InitializeComponent();
 
             Connection();
@@ -45,7 +44,7 @@ namespace AdoNet
 
             string querySelect = $"select * FROM customers"; //Order By customers.id
 
-            using (SqlConnection customerConnection = new SqlConnection(connectionString)) // strConnection.ConnectionString
+            using (SqlConnection customerConnection = new SqlConnection(connectionString)) 
             {
                 try
                 {
@@ -56,6 +55,16 @@ namespace AdoNet
                     custAdapter.SelectCommand = command;
 
                     custAdapter.Fill(customerOrders, "customers");
+
+                    #region delete
+
+                    string sql = "DELETE FROM customers WHERE id_user = @id";
+
+                    custAdapter.DeleteCommand = new SqlCommand(sql, customerConnection);
+                    custAdapter.DeleteCommand.Parameters.Add("@id", SqlDbType.Int, 4, "id_user");
+
+                    #endregion
+
                 }
                 catch (Exception e)
                 {
@@ -110,27 +119,27 @@ namespace AdoNet
 
         }
 
-        private void EditCustomerButton(object sender, RoutedEventArgs e)
+        private void DeletCustomerButton(object sender, RoutedEventArgs e)
         {
             row = (DataRowView)gridView.SelectedItem;
             row.Row.Delete();
             custAdapter.Update(customerOrders.Tables[0]);
         }
 
-        private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
-        {
-            var AuthorizationWindow = new AuthorizationWindow();
+        //private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
+        //{
+        //    var AuthorizationWindow = new AuthorizationWindow();
 
-            AuthorizationWindow.Owner = this;
+        //    AuthorizationWindow.Owner = this;
 
-            AuthorizationWindow.ShowDialog();
+        //    AuthorizationWindow.ShowDialog();
 
-            if (AuthorizationWindow.DialogResult == true)
-            {
-                //Connection();
-            }
-            else { this.Close(); }
-        }
+        //    if (AuthorizationWindow.DialogResult == true)
+        //    {
+        //        //Connection();
+        //    }
+        //    else { this.Close(); }
+        //}
 
     }
 }
