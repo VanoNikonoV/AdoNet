@@ -12,15 +12,20 @@ namespace AdoNet
 
     public partial class MainWindow : Window
     {
-        SqlDataAdapter custAdapter;
+        private SqlDataAdapter custAdapter;
 
-        OleDbDataAdapter ordAdapter;
+        private OleDbDataAdapter ordAdapter;
 
-        DataTable table;
+        private DataTable table;
 
-        DataSet customerOrders;
+        private DataSet customerOrders;
 
         DataRowView row;
+
+        DataRowCollection rows;
+
+        private readonly string connectionStringSql =
+                ConfigurationManager.ConnectionStrings["sql"].ConnectionString;
 
         public MainWindow()
         {
@@ -31,6 +36,8 @@ namespace AdoNet
             table = new DataTable();
 
             customerOrders = new DataSet();
+
+           
 
             InitializeComponent();
 
@@ -106,25 +113,100 @@ namespace AdoNet
                 customerOrders.Tables["customers"].Columns["e_mail"],   //customerOrders.Tables[0].Columns[5],
                 customerOrders.Tables["orders"].Columns["e_mail"]);     //customerOrders.Tables[1].Columns[1]);
 
+            
+
+
+            ForeignKeyConstraint foreignKeyConstraint = new ForeignKeyConstraint("FK_customers",
+                customerOrders.Tables[0].Columns["e_mail"], customerOrders.Tables[1].Columns["e_mail"]);
+            foreignKeyConstraint.DeleteRule = Rule.Cascade;
+            foreignKeyConstraint.UpdateRule = Rule.Cascade;
+            foreignKeyConstraint.AcceptRejectRule = AcceptRejectRule.Cascade;
+
+            //customerOrders.Tables[0].Constraints.Add(foreignKeyConstraint);
+
             gridView.DataContext = customerOrders.Tables[0];
+            gridViewOrders.DataContext = customerOrders.Tables[1];
 
-            table = customerOrders.Tables[0];
+            //table = customerOrders.Tables[0];
 
-            foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
-            {
-                //Debug.WriteLine(pRow["e_mail"]);
-                foreach (DataRow cRow in pRow.GetChildRows(customerOrders.Relations[0]))
-                    Debug.WriteLine("\t" + cRow[1]);
-            }
+            //foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
+            //{
+            //    //Debug.WriteLine(pRow["e_mail"]);
+            //    foreach (DataRow cRow in pRow.GetChildRows(customerOrders.Relations[0]))
+            //        Debug.WriteLine("\t" + cRow[1]);
+            //}
 
         }
 
         private void DeletCustomerButton(object sender, RoutedEventArgs e)
         {
-            row = (DataRowView)gridView.SelectedItem;
-            row.Row.Delete();
-            custAdapter.Update(customerOrders.Tables[0]);
+            this.DeleteCommand(this.connectionStringSql);
         }
+
+        private async Task DeleteCommand(string connectionStringSql)
+        {
+            using (SqlConnection customerConnection = new SqlConnection(connectionStringSql))
+            {
+                try
+                {
+                    await customerConnection.OpenAsync();
+
+                    string sql = "DELETE FROM customers WHERE id_user = @id";
+
+                    custAdapter.DeleteCommand = new SqlCommand(sql, customerConnection);
+
+                    custAdapter.DeleteCommand.Parameters.Add("@id", SqlDbType.Int, 4, "id_user");
+
+                    row = (DataRowView)gridView.SelectedItem;
+
+                    row.Row.Delete();
+
+                    custAdapter.Update(customerOrders.Tables[0]);
+
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                }
+            }
+        }
+
+        private void ClearTableButton(object sender, RoutedEventArgs e)
+        {
+            this.ClearTabelCommand(this.connectionStringSql);
+        }
+
+        private async Task ClearTabelCommand(string connectionStringSql)
+        {
+            using (SqlConnection customerConnection = new SqlConnection(connectionStringSql))
+            {
+                try
+                {
+                    await customerConnection.OpenAsync();
+
+                    //customerOrders.Tables[0].Clear();
+
+                    string sql = "DELETE FROM customers";
+
+                    custAdapter.DeleteCommand = new SqlCommand(sql, customerConnection);
+
+                    //custAdapter.DeleteCommand.Parameters.Add("@id", SqlDbType.Int, 4, "id_user");
+
+                    //rows = (DataRowCollection)gridView.ItemsSource;
+
+                    //rows.Clear();
+
+                    custAdapter.Update(customerOrders.Tables[0]);
+
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                }
+            }
+        }
+
+
 
         //private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
         //{

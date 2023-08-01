@@ -6,13 +6,15 @@
         xmlns:local="clr-namespace:AdoNet"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d" 
-        Title="Task 2" Height="500" Width="1000"
-        Background="#FFDADADA"> <!--Loaded="LoadAuthorizationWindow"-->
+        Title="Task 2" Height="500" Width="1450"
+        Background="#FFDADADA">
+    <!--Loaded="LoadAuthorizationWindow"-->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="35"/>
             <ColumnDefinition Width="220"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="700"/>
+            <ColumnDefinition Width="460"/>
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Vertical"
@@ -30,7 +32,7 @@
                                              VerticalAlignment="Center" 
                                              Foreground="#FF71B73A"/>
             </Button>
-            
+
             <Button VerticalAlignment="Bottom" 
                     HorizontalAlignment="Center"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -46,7 +48,24 @@
                                              VerticalAlignment="Center" 
                                              Foreground="#FF71B73A"/>
             </Button>
-            
+
+            <Button VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    IsDefault="True"
+                    Width="30" Height="30"
+                    Margin="0 5"
+                    Cursor="Hand" 
+                    Padding="0" 
+                    ToolTip="Удалить клиента"
+                    Click="DeletCustomerButton">
+                <materialDesign:PackIcon Kind="AccountCancel" 
+                                             Width="25" Height="25" 
+                                             HorizontalAlignment="Center" 
+                                             VerticalAlignment="Center" 
+                                             Foreground="#FF71B73A"/>
+            </Button>
+
             <Button VerticalAlignment="Bottom" 
                     HorizontalAlignment="Center"
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -63,15 +82,15 @@
                                              Foreground="#FF226DE7"/>
             </Button>
 
-            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" 
+            <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" 
                     Style="{StaticResource MaterialDesignFlatButton}"
                     IsCancel="True" 
                     Cursor="Hand"
                     Width="30" Height="30"
                     Padding="0"
-                    Margin="0 5" 
-                    ToolTip="Очистка таблиц"
-                     Click="DeletCustomerButton">
+                    Margin="3,5,0,5" 
+                    ToolTip="Очистка таблиц" 
+                    Click="ClearTableButton">
                 <materialDesign:PackIcon Kind="CloseOutline" 
                                          Width="25" Height="25" 
                                          HorizontalAlignment="Center" 
@@ -132,58 +151,99 @@
             <Border.Effect>
                 <DropShadowEffect BlurRadius="50" Color="Green" ShadowDepth="0"/>
             </Border.Effect>
-        
-        <DataGrid x:Name="gridView"
+
+            <DataGrid x:Name="gridView"
                   Margin="10"
                   IsSynchronizedWithCurrentItem="True"
                   SelectionMode="Single" 
                   AutoGenerateColumns="False" 
                   ItemsSource="{Binding}"
                   IsReadOnly="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn x:Name="id"
+                <DataGrid.Columns>
+                    <DataGridTextColumn x:Name="id"
                                     Binding="{Binding id_user}"
                                     Header="ID"
                                     IsReadOnly="True" 
                                     Width="60"/>
-                <DataGridTextColumn x:Name="surname"
+                    <DataGridTextColumn x:Name="surname"
                                     Binding="{Binding surname}"
                                     Header="Фамилия"
                                     IsReadOnly="True" 
                                     Width="120"/>
-                <DataGridTextColumn x:Name="name"
+                    <DataGridTextColumn x:Name="name"
                                     Binding="{Binding name}"
                                     Header="Имя"
                                     IsReadOnly="True"
                                     Width="100"/>
-                <DataGridTextColumn x:Name="patronymic"
+                    <DataGridTextColumn x:Name="patronymic"
                                     Binding="{Binding patronymic}"
                                     Header="Отчество"
                                     IsReadOnly="True"
                                     Width="150"/>
-                <DataGridTextColumn x:Name="telefon"
+                    <DataGridTextColumn x:Name="telefon"
                                     Binding="{Binding telefon}"
                                     Header="Телефон"
                                     IsReadOnly="True"
                                     Width="120"/>
-                <DataGridTextColumn x:Name="e_mail"
+                    <DataGridTextColumn x:Name="e_mail"
                                     Binding="{Binding e_mail}"
                                     Header="E-mail"
                                     IsReadOnly="True"
                                     Width="130"/>
-            </DataGrid.Columns>
+                </DataGrid.Columns>
 
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Добавить" />
-                                  <!--Click="MenuItemAddClick"-->
+                        <!--Click="MenuItemAddClick"-->
                         <MenuItem Header="Удалить" />
-                                  <!--Click="MenuItemDeleteClick"-->
+                        <!--Click="MenuItemDeleteClick"-->
                     </ContextMenu>
                 </DataGrid.ContextMenu>
 
             </DataGrid>
         </Border>
-        
+
+        <Border Grid.Column="3" 
+                Background ="White" 
+                CornerRadius="25"
+                Margin="5">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="50" Color="Green" ShadowDepth="0"/>
+            </Border.Effect>
+
+            <DataGrid x:Name="gridViewOrders"
+                  Margin="10"
+                  IsSynchronizedWithCurrentItem="True"
+                  SelectionMode="Single" 
+                  AutoGenerateColumns="False" 
+                  ItemsSource="{Binding}"
+                  IsReadOnly="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn x:Name="id_product"
+                                    Binding="{Binding id_product}"
+                                    Header="ID"
+                                    IsReadOnly="True" 
+                                    Width="60"/>
+                    <DataGridTextColumn x:Name="E_mail"
+                                    Binding="{Binding e_mail}"
+                                    Header="E-mail"
+                                    IsReadOnly="True" 
+                                    Width="100"/>
+                    <DataGridTextColumn x:Name="productCode"
+                                    Binding="{Binding productCode}"
+                                    Header="Код продукта"
+                                    IsReadOnly="True"
+                                    Width="100"/>
+                    <DataGridTextColumn x:Name="nameProduct"
+                                    Binding="{Binding nameProduct}"
+                                    Header="Наименование"
+                                    IsReadOnly="True"
+                                    Width="150"/>
+                </DataGrid.Columns>
+
+            </DataGrid>
+        </Border>
+
     </Grid>
 </Window>
