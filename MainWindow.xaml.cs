@@ -6,6 +6,7 @@ using System.Windows;
 using System.Configuration;
 using System.Diagnostics;
 using System.Data;
+using AdoNet.View;
 
 namespace AdoNet
 {
@@ -37,8 +38,6 @@ namespace AdoNet
 
             customerOrders = new DataSet();
 
-           
-
             InitializeComponent();
 
             Connection();
@@ -62,15 +61,6 @@ namespace AdoNet
                     custAdapter.SelectCommand = command;
 
                     custAdapter.Fill(customerOrders, "customers");
-
-                    #region delete
-
-                    string sql = "DELETE FROM customers WHERE id_user = @id";
-
-                    custAdapter.DeleteCommand = new SqlCommand(sql, customerConnection);
-                    custAdapter.DeleteCommand.Parameters.Add("@id", SqlDbType.Int, 4, "id_user");
-
-                    #endregion
 
                 }
                 catch (Exception e)
@@ -109,31 +99,28 @@ namespace AdoNet
                     Debug.WriteLine("Done");
                 }
             }
-            customerOrders.Relations.Add("CustOrders",
-                customerOrders.Tables["customers"].Columns["e_mail"],   //customerOrders.Tables[0].Columns[5],
-                customerOrders.Tables["orders"].Columns["e_mail"]);     //customerOrders.Tables[1].Columns[1]);
+            DataRelation customerOrdersRelation = 
+                customerOrders.Relations.Add("CustOrders",
+                customerOrders.Tables["customers"].Columns[5],   //customerOrders.Tables[0].Columns["e_mail"],
+                customerOrders.Tables["orders"].Columns[1]);     //customerOrders.Tables[1].Columns["e_mail"]);
 
-            
-
-
-            ForeignKeyConstraint foreignKeyConstraint = new ForeignKeyConstraint("FK_customers",
-                customerOrders.Tables[0].Columns["e_mail"], customerOrders.Tables[1].Columns["e_mail"]);
-            foreignKeyConstraint.DeleteRule = Rule.Cascade;
-            foreignKeyConstraint.UpdateRule = Rule.Cascade;
-            foreignKeyConstraint.AcceptRejectRule = AcceptRejectRule.Cascade;
+            //ForeignKeyConstraint foreignKeyConstraint = new ForeignKeyConstraint("FK_customers",
+            //    customerOrders.Tables[0].Columns["e_mail"], customerOrders.Tables[1].Columns["e_mail"]);
+            //foreignKeyConstraint.DeleteRule = Rule.Cascade;
+            //foreignKeyConstraint.UpdateRule = Rule.Cascade;
+            //foreignKeyConstraint.AcceptRejectRule = AcceptRejectRule.Cascade;
 
             //customerOrders.Tables[0].Constraints.Add(foreignKeyConstraint);
 
             gridView.DataContext = customerOrders.Tables[0];
             gridViewOrders.DataContext = customerOrders.Tables[1];
 
-            //table = customerOrders.Tables[0];
 
-            //foreach (DataRow pRow in customerOrders.Tables["Customers"].Rows)
+            //foreach (DataRow custRow in customerOrders.Tables["customers"].Rows)
             //{
-            //    //Debug.WriteLine(pRow["e_mail"]);
-            //    foreach (DataRow cRow in pRow.GetChildRows(customerOrders.Relations[0]))
-            //        Debug.WriteLine("\t" + cRow[1]);
+            //    Console.WriteLine(custRow["e_mail"]);
+            //    foreach (DataRow orderRow in custRow.GetChildRows(customerOrders.Relations[0]))
+            //        Console.WriteLine("\t" + orderRow["e_mail"]);
             //}
 
         }
@@ -161,8 +148,6 @@ namespace AdoNet
 
                     row.Row.Delete();
 
-                    custAdapter.Update(customerOrders.Tables[0]);
-
                 }
                 catch (Exception e)
                 {
@@ -184,19 +169,17 @@ namespace AdoNet
                 {
                     await customerConnection.OpenAsync();
 
-                    //customerOrders.Tables[0].Clear();
-
-                    string sql = "DELETE FROM customers";
+                    string sql = "DELETE FROM [dbo].[customers]";
 
                     custAdapter.DeleteCommand = new SqlCommand(sql, customerConnection);
 
-                    //custAdapter.DeleteCommand.Parameters.Add("@id", SqlDbType.Int, 4, "id_user");
+                    //int x = cmd.ExecuteNonQuery();
+
+                    //customerOrders.Tables[0].Clear();
 
                     //rows = (DataRowCollection)gridView.ItemsSource;
 
                     //rows.Clear();
-
-                    custAdapter.Update(customerOrders.Tables[0]);
 
                 }
                 catch (Exception e)
@@ -206,7 +189,73 @@ namespace AdoNet
             }
         }
 
+        private void SelectProductButton(object sender, RoutedEventArgs e)
+        {
+            var selectedRow = (DataRowView)gridView.SelectedItem;
 
+            DataTable allProducts = new DataTable("allProducts");
+
+            DataColumn column;
+
+            DataRow row;
+
+            // первая колонка
+            column = new DataColumn();
+            column.DataType = System.Type.GetType("System.Int32");
+            column.ColumnName = "id_product";
+            column.ReadOnly = true;
+            column.Unique = true;
+            allProducts.Columns.Add(column);
+
+            //вторая колонка
+            column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.ColumnName = "e_mail";
+            column.ReadOnly = true;
+            column.Unique = false;
+            allProducts.Columns.Add(column);
+
+            //трейтья колонка
+            column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.ColumnName = "productCode";
+            column.ReadOnly = true;
+            column.Unique = true;
+            allProducts.Columns.Add(column);
+
+            //четвертая колонка
+            column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.ColumnName = "nameProduct";
+            column.ReadOnly = true;
+            column.Unique = true;
+            allProducts.Columns.Add(column);
+
+            DataSet ds = new DataSet();
+
+            ds.Tables.Add(allProducts);
+
+            foreach (DataRow custRow in customerOrders.Tables["customers"].Rows)
+            {
+                if (selectedRow[0].Equals(custRow[0]))
+                {
+                    foreach (DataRow orderRow in custRow.GetChildRows(customerOrders.Relations[0]))
+                    {
+                        row = allProducts.NewRow();
+                        row["id_product"] = orderRow[0];
+                        row["e_mail"] = orderRow[1];
+                        row["productCode"] = orderRow[2];  
+                        row["nameProduct"] = orderRow[3];
+                        allProducts.Rows.Add(row);
+                    }
+                    break;
+                }              
+            }
+
+            SelectProductWindow AllProductsCuctomer = new SelectProductWindow(ds.Tables[0]);
+
+            AllProductsCuctomer.Show();
+        }
 
         //private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
         //{

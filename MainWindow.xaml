@@ -25,7 +25,9 @@
                     Style="{StaticResource MaterialDesignFlatButton}"
                     IsDefault="True"
                     Width="30" Height="30"
-                    Cursor="Hand" Padding="0" ToolTip="Выборка товаров клиента">
+                    Cursor="Hand" Padding="0" 
+                    ToolTip="Выборка товаров клиента"
+                    Click="SelectProductButton">
                 <materialDesign:PackIcon Kind="SelectSearch" 
                                              Width="25" Height="25" 
                                              HorizontalAlignment="Center" 

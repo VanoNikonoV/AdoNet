@@ -85,6 +85,9 @@
     <Compile Include="View\CostumerEditControl.xaml.cs">
       <DependentUpon>CostumerEditControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\SelectProductWindow.xaml.cs">
+      <DependentUpon>SelectProductWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="AuthorizationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -105,6 +108,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\CostumerEditControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SelectProductWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
