@@ -5,7 +5,7 @@
     [patronymic] NVARCHAR (50) NOT NULL,
     [telefon]    NVARCHAR(11) NOT NULL,
     [e_mail]     NVARCHAR (50) NOT NULL,
-    UNIQUE NONCLUSTERED ([e_mail] ASC),
+    CONSTRAINT [UQ_customer_email] UNIQUE NONCLUSTERED ([e_mail] ASC),
     CONSTRAINT [PK_customers] PRIMARY KEY CLUSTERED ([id_user] ASC)
 );
 

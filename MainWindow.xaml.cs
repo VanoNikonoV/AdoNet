@@ -13,6 +13,13 @@ namespace AdoNet
 
     public partial class MainWindow : Window
     {
+        #region Поля
+        private readonly string SqlConnectionString =
+                ConfigurationManager.ConnectionStrings["sql"].ConnectionString;
+
+        private readonly string OledBConnectionString=
+                ConfigurationManager.ConnectionStrings["MSAccess"].ConnectionString;
+
         private SqlDataAdapter custAdapter;
 
         private OleDbDataAdapter ordAdapter;
@@ -24,9 +31,8 @@ namespace AdoNet
         DataRowView row;
 
         DataRowCollection rows;
+        #endregion
 
-        private readonly string connectionStringSql =
-                ConfigurationManager.ConnectionStrings["sql"].ConnectionString;
 
         public MainWindow()
         {
@@ -45,12 +51,9 @@ namespace AdoNet
 
         public async Task Connection()
         {
-            string connectionString =
-                ConfigurationManager.ConnectionStrings["sql"].ConnectionString;
-
             string querySelect = $"select * FROM customers"; //Order By customers.id
 
-            using (SqlConnection customerConnection = new SqlConnection(connectionString)) 
+            using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString)) 
             {
                 try
                 {
@@ -67,24 +70,15 @@ namespace AdoNet
                 {
                     Debug.WriteLine(e.Message);
                 }
-                finally
-                {
-                    Debug.WriteLine("Done");
-                }
             }
 
-            string connectionString2 =
-                ConfigurationManager.ConnectionStrings["MSAccess"].ConnectionString;
-
-            querySelect = $"select * FROM orders";
-
-            using (OleDbConnection orderConnection = new OleDbConnection(connectionString2))
+            using (OleDbConnection orderConnection = new OleDbConnection(OledBConnectionString))
             {
                 try
                 {
                     await orderConnection.OpenAsync();
 
-                    OleDbCommand command = new OleDbCommand(querySelect, orderConnection);
+                    OleDbCommand command = new OleDbCommand($"select * FROM orders", orderConnection);
 
                     ordAdapter.SelectCommand = command;
 
@@ -94,76 +88,58 @@ namespace AdoNet
                 {
                     Debug.WriteLine($"Access " + e.Message);
                 }
-                finally
-                {
-                    Debug.WriteLine("Done");
-                }
+                
             }
             DataRelation customerOrdersRelation = 
                 customerOrders.Relations.Add("CustOrders",
                 customerOrders.Tables["customers"].Columns[5],   //customerOrders.Tables[0].Columns["e_mail"],
                 customerOrders.Tables["orders"].Columns[1]);     //customerOrders.Tables[1].Columns["e_mail"]);
 
-            //ForeignKeyConstraint foreignKeyConstraint = new ForeignKeyConstraint("FK_customers",
-            //    customerOrders.Tables[0].Columns["e_mail"], customerOrders.Tables[1].Columns["e_mail"]);
-            //foreignKeyConstraint.DeleteRule = Rule.Cascade;
-            //foreignKeyConstraint.UpdateRule = Rule.Cascade;
-            //foreignKeyConstraint.AcceptRejectRule = AcceptRejectRule.Cascade;
-
-            //customerOrders.Tables[0].Constraints.Add(foreignKeyConstraint);
-
-            gridView.DataContext = customerOrders.Tables[0];
-            gridViewOrders.DataContext = customerOrders.Tables[1];
-
-
-            //foreach (DataRow custRow in customerOrders.Tables["customers"].Rows)
-            //{
-            //    Console.WriteLine(custRow["e_mail"]);
-            //    foreach (DataRow orderRow in custRow.GetChildRows(customerOrders.Relations[0]))
-            //        Console.WriteLine("\t" + orderRow["e_mail"]);
-            //}
-
+            gridView.DataContext = customerOrders.Tables[0].DefaultView;
+            gridViewOrders.DataContext = customerOrders.Tables[1].DefaultView;
         }
 
         private void DeletCustomerButton(object sender, RoutedEventArgs e)
         {
-            this.DeleteCommand(this.connectionStringSql);
+            this.DeleteCommand();
         }
 
-        private async Task DeleteCommand(string connectionStringSql)
+        private async Task DeleteCommand()
         {
-            using (SqlConnection customerConnection = new SqlConnection(connectionStringSql))
+            using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString))
             {
                 try
                 {
                     await customerConnection.OpenAsync();
 
-                    string sql = "DELETE FROM customers WHERE id_user = @id";
+                    string sql = "DELETE FROM customers WHERE id_user = @id_user";
 
                     custAdapter.DeleteCommand = new SqlCommand(sql, customerConnection);
 
-                    custAdapter.DeleteCommand.Parameters.Add("@id", SqlDbType.Int, 4, "id_user");
+                    custAdapter.DeleteCommand.Parameters.Add("@id_user", SqlDbType.Int, 4, "id_user");
 
                     row = (DataRowView)gridView.SelectedItem;
 
                     row.Row.Delete();
 
+                    custAdapter.Update(customerOrders.Tables[0]);
+
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e.Message);
+                    MessageBox.Show(e.Message);
                 }
             }
         }
 
         private void ClearTableButton(object sender, RoutedEventArgs e)
         {
-            this.ClearTabelCommand(this.connectionStringSql);
+            this.ClearTabelCommand();
         }
 
-        private async Task ClearTabelCommand(string connectionStringSql)
+        private async Task ClearTabelCommand()
         {
-            using (SqlConnection customerConnection = new SqlConnection(connectionStringSql))
+            using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString))
             {
                 try
                 {
@@ -180,6 +156,7 @@ namespace AdoNet
                     //rows = (DataRowCollection)gridView.ItemsSource;
 
                     //rows.Clear();
+                    custAdapter.Update(customerOrders.Tables[0]);
 
                 }
                 catch (Exception e)
@@ -256,6 +233,97 @@ namespace AdoNet
 
             AllProductsCuctomer.Show();
         }
+
+        /// <summary>
+        /// Вызов методя для редактирования клиента
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EditcustomerButton(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private async Task UpdateCustomerButton()
+        {
+            using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString))
+            {
+                try
+                {
+                    await customerConnection.OpenAsync();
+
+                    string sql = "UPDATE customers SET" +
+                        "id_user = @id_user," +
+                        "surname = @surname," +
+                        "name = @name," +
+                        "patronymic = @patronymic," +
+                        "telefon =@telefon," +
+                        "e_mail = @e_mail";
+
+                    custAdapter.UpdateCommand = new SqlCommand(sql, customerConnection);
+                    custAdapter.UpdateCommand.Parameters.Add("@id", SqlDbType.Int, 4, "id_user");
+                    custAdapter.UpdateCommand.Parameters.Add("@surname", SqlDbType.NVarChar, 4, "surname");
+                    custAdapter.UpdateCommand.Parameters.Add("@name", SqlDbType.NVarChar, 4, "name");
+                    custAdapter.UpdateCommand.Parameters.Add("@patronymic", SqlDbType.NVarChar, 4, "patronymic");
+                    custAdapter.UpdateCommand.Parameters.Add("@telefon", SqlDbType.NVarChar, 4, "telefon");
+                    custAdapter.UpdateCommand.Parameters.Add("@e_mail", SqlDbType.NVarChar, 4, "e_mail");
+
+                }
+                catch (Exception e)
+                {
+                    
+                    //MessageBox.Show(e.Message);
+                }
+            }
+        }
+
+        private void GVCellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
+        {
+            //var selectedRow = (DataRowView)gridView.SelectedItem;
+            row = (DataRowView)gridView.SelectedItem;
+            row.BeginEdit();
+        }
+
+        private void GVCurrentCellChanged(object sender, EventArgs e)
+        {
+            if (row == null) return;
+
+            using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString))
+            {
+                try
+                {
+                    customerConnection.Open();
+
+                    string sql = @"UPDATE customers SET 
+                                    surname = @surname, 
+                                    name = @name, 
+                                    patronymic = @patronymic, 
+                                    telefon = @telefon, 
+                                    e_mail = @e_mail 
+                                    WHERE id_user = @id_user";
+
+                    custAdapter.UpdateCommand = new SqlCommand(sql, customerConnection);
+                    
+                    custAdapter.UpdateCommand.Parameters.Add("@surname", SqlDbType.NVarChar, 4, "surname");
+                    custAdapter.UpdateCommand.Parameters.Add("@name", SqlDbType.NVarChar, 50, "name");
+                    custAdapter.UpdateCommand.Parameters.Add("@patronymic", SqlDbType.NVarChar, 50, "patronymic");
+                    custAdapter.UpdateCommand.Parameters.Add("@telefon", SqlDbType.NVarChar, 11, "telefon");
+                    custAdapter.UpdateCommand.Parameters.Add("@e_mail", SqlDbType.NVarChar, 50, "e_mail"); 
+
+                    row.EndEdit();
+
+                    custAdapter.Update(customerOrders.Tables[0]);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    //MessageBox.Show(ex.Message);
+                }
+            }
+
+        }
+
+        //-------------------LOAD-----------------------------------------------
 
         //private void LoadAuthorizationWindow(object sender, RoutedEventArgs e)
         //{

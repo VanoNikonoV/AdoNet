@@ -6,13 +6,14 @@
         xmlns:local="clr-namespace:AdoNet"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d" 
-        Title="Task 2" Height="500" Width="1450"
+        Title="Task 2" Height="500" Width="1400"
         Background="#FFDADADA">
-    <!--Loaded="LoadAuthorizationWindow"-->
+    <!--Loaded="LoadAuthorizationWindow">-->
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="35"/>
-            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="180"/>
             <ColumnDefinition Width="700"/>
             <ColumnDefinition Width="460"/>
         </Grid.ColumnDefinitions>
@@ -101,7 +102,7 @@
             </Button>
         </StackPanel>
 
-        <StackPanel Name="СustomerВataPanel"
+        <StackPanel Name="СustomerEditPanel"
                     Orientation="Vertical"
                     Grid.Column="1"
                     Margin="0 0 10 0"
@@ -136,7 +137,8 @@
                     IsDefault="True"
                     Width="60" Height="30"
                     Cursor="Hand" 
-                    ToolTip="Подтвердить изменения">
+                    ToolTip="Подтвердить изменения" Click="EditcustomerButton"
+                    >
                 <materialDesign:PackIcon Kind="Edit" 
                                          Width="25" Height="25" 
                                          HorizontalAlignment="Center" 
@@ -156,11 +158,13 @@
 
             <DataGrid x:Name="gridView"
                   Margin="10"
+                  SelectionMode="Single"
                   IsSynchronizedWithCurrentItem="True"
-                  SelectionMode="Single" 
                   AutoGenerateColumns="False" 
                   ItemsSource="{Binding}"
-                  IsReadOnly="False">
+                  IsReadOnly="False"
+                  CurrentCellChanged="GVCurrentCellChanged"
+                  CellEditEnding="GVCellEditEnding">
                 <DataGrid.Columns>
                     <DataGridTextColumn x:Name="id"
                                     Binding="{Binding id_user}"
@@ -170,12 +174,10 @@
                     <DataGridTextColumn x:Name="surname"
                                     Binding="{Binding surname}"
                                     Header="Фамилия"
-                                    IsReadOnly="True" 
                                     Width="120"/>
                     <DataGridTextColumn x:Name="name"
                                     Binding="{Binding name}"
                                     Header="Имя"
-                                    IsReadOnly="True"
                                     Width="100"/>
                     <DataGridTextColumn x:Name="patronymic"
                                     Binding="{Binding patronymic}"
@@ -185,12 +187,10 @@
                     <DataGridTextColumn x:Name="telefon"
                                     Binding="{Binding telefon}"
                                     Header="Телефон"
-                                    IsReadOnly="True"
                                     Width="120"/>
                     <DataGridTextColumn x:Name="e_mail"
                                     Binding="{Binding e_mail}"
                                     Header="E-mail"
-                                    IsReadOnly="True"
                                     Width="130"/>
                 </DataGrid.Columns>
 
