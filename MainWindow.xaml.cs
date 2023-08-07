@@ -116,14 +116,13 @@ namespace AdoNet
 
                     custAdapter.DeleteCommand = new SqlCommand(sql, customerConnection);
 
-                    custAdapter.DeleteCommand.Parameters.Add("@id_user", SqlDbType.Int, 4, "id_user");
+                    custAdapter.DeleteCommand.Parameters.Add("@id_user", SqlDbType.Int, 4, "id_user").Direction = ParameterDirection.InputOutput;
 
                     row = (DataRowView)gridView.SelectedItem;
 
                     row.Row.Delete();
 
                     custAdapter.Update(customerOrders.Tables[0]);
-
                 }
                 catch (Exception e)
                 {
@@ -147,17 +146,13 @@ namespace AdoNet
 
                     string sql = "DELETE FROM [dbo].[customers]";
 
-                    custAdapter.DeleteCommand = new SqlCommand(sql, customerConnection);
+                    SqlCommand command = new SqlCommand(sql, customerConnection);
 
-                    //int x = cmd.ExecuteNonQuery();
+                    int x = command.ExecuteNonQuery();
 
-                    //customerOrders.Tables[0].Clear();
-
-                    //rows = (DataRowCollection)gridView.ItemsSource;
-
-                    //rows.Clear();
+                    customerOrders.Tables[1].Clear();
+                    customerOrders.Tables[0].Clear();
                     custAdapter.Update(customerOrders.Tables[0]);
-
                 }
                 catch (Exception e)
                 {
