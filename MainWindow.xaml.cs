@@ -298,8 +298,8 @@ namespace AdoNet
                                     WHERE id_user = @id_user";
 
                     custAdapter.UpdateCommand = new SqlCommand(sql, customerConnection);
-                    
-                    custAdapter.UpdateCommand.Parameters.Add("@surname", SqlDbType.NVarChar, 4, "surname");
+                    custAdapter.UpdateCommand.Parameters.Add("@id_user", SqlDbType.NVarChar, 4, "id_user");
+                    custAdapter.UpdateCommand.Parameters.Add("@surname", SqlDbType.NVarChar, 50, "surname");
                     custAdapter.UpdateCommand.Parameters.Add("@name", SqlDbType.NVarChar, 50, "name");
                     custAdapter.UpdateCommand.Parameters.Add("@patronymic", SqlDbType.NVarChar, 50, "patronymic");
                     custAdapter.UpdateCommand.Parameters.Add("@telefon", SqlDbType.NVarChar, 11, "telefon");
