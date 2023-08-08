@@ -10,7 +10,6 @@ using AdoNet.View;
 
 namespace AdoNet
 {
-
     public partial class MainWindow : Window
     {
         #region Поля
@@ -32,7 +31,6 @@ namespace AdoNet
 
         DataRowCollection rows;
         #endregion
-
 
         public MainWindow()
         {
@@ -94,6 +92,8 @@ namespace AdoNet
                 customerOrders.Relations.Add("CustOrders",
                 customerOrders.Tables["customers"].Columns[5],   //customerOrders.Tables[0].Columns["e_mail"],
                 customerOrders.Tables["orders"].Columns[1]);     //customerOrders.Tables[1].Columns["e_mail"]);
+
+            //var constr = customerOrders.Tables[0].Select("id_user >5"); 
 
             gridView.DataContext = customerOrders.Tables[0].DefaultView;
             gridViewOrders.DataContext = customerOrders.Tables[1].DefaultView;
@@ -239,39 +239,6 @@ namespace AdoNet
             
         }
 
-        private async Task UpdateCustomerButton()
-        {
-            using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString))
-            {
-                try
-                {
-                    await customerConnection.OpenAsync();
-
-                    string sql = "UPDATE customers SET" +
-                        "id_user = @id_user," +
-                        "surname = @surname," +
-                        "name = @name," +
-                        "patronymic = @patronymic," +
-                        "telefon =@telefon," +
-                        "e_mail = @e_mail";
-
-                    custAdapter.UpdateCommand = new SqlCommand(sql, customerConnection);
-                    custAdapter.UpdateCommand.Parameters.Add("@id", SqlDbType.Int, 4, "id_user");
-                    custAdapter.UpdateCommand.Parameters.Add("@surname", SqlDbType.NVarChar, 4, "surname");
-                    custAdapter.UpdateCommand.Parameters.Add("@name", SqlDbType.NVarChar, 4, "name");
-                    custAdapter.UpdateCommand.Parameters.Add("@patronymic", SqlDbType.NVarChar, 4, "patronymic");
-                    custAdapter.UpdateCommand.Parameters.Add("@telefon", SqlDbType.NVarChar, 4, "telefon");
-                    custAdapter.UpdateCommand.Parameters.Add("@e_mail", SqlDbType.NVarChar, 4, "e_mail");
-
-                }
-                catch (Exception e)
-                {
-                    
-                    //MessageBox.Show(e.Message);
-                }
-            }
-        }
-
         private void GVCellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
         {
             //var selectedRow = (DataRowView)gridView.SelectedItem;
@@ -311,11 +278,95 @@ namespace AdoNet
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        private void AddNewCustomerButton(object sender, RoutedEventArgs e)
+        {
+            using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString))
+            {
+                try
+                {
+                    customerConnection.Open();
+
+                    DataRow dataRow = customerOrders.Tables[0].NewRow();
+                   
+                    string sql = @"INSERT INTO customers (surname, name, patronymic, telefon, e_mail) 
+                                           VALUES (@surname, @name, @patronymic, @telefon, @e_mail) 
+                                           SET @id_user = @@IDENTITY";
+
+                    custAdapter.InsertCommand = new SqlCommand(sql, customerConnection);
+
+                    custAdapter.InsertCommand.Parameters.Add("@id_user", SqlDbType.Int, 4, "id_user").Direction = ParameterDirection.Output;
+                    custAdapter.InsertCommand.Parameters.Add("@surname", SqlDbType.NVarChar, 50, "surname");
+                    custAdapter.InsertCommand.Parameters.Add("@name", SqlDbType.NVarChar, 50, "name");
+                    custAdapter.InsertCommand.Parameters.Add("@patronymic", SqlDbType.NVarChar, 50, "patronymic");
+                    custAdapter.InsertCommand.Parameters.Add("@telefon", SqlDbType.NVarChar, 50, "telefon"); 
+                    custAdapter.InsertCommand.Parameters.Add("@e_mail", SqlDbType.NVarChar, 50, "e_mail");
+
+                    custAdapter.Update(customerOrders.Tables[0]);
+
+                    NewCustomerWindow newCustomer = new NewCustomerWindow(dataRow);
+                    newCustomer.Owner = this;
+                    newCustomer.ShowDialog();
+
+                    if (newCustomer.DialogResult.Value)
+                    {
+                        customerOrders.Tables[0].Rows.Add(dataRow);
+                        custAdapter.Update(customerOrders.Tables[0]);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        private void AddProductButton(object sender, RoutedEventArgs e)
+        {
+            var selectedRow = (DataRowView)gridView.SelectedItem;
+
+            using (OleDbConnection orderConnection = new OleDbConnection(OledBConnectionString))
+            {
+                try
+                {
+                    orderConnection.Open();
+
+                    DataRow dataRow = customerOrders.Tables[1].NewRow();
+                    //DataRow[] dataRowsChild =  dataRow.GetChildRows("CustOrders");
+
+                    //dataRow[1] = selectedRow.Row[5];
+
+                    string oleDd = @"INSERT INTO orders (e_mail, productCode, nameProduct) 
+                                           VALUES ((SELECT e_mail FROM customers WHERE e_mail ='1@mail.ru'), @productCode, @nameProduct) 
+                                           SET @id_product = @@IDENTITY";
+
+                    ordAdapter.InsertCommand = new OleDbCommand(oleDd, orderConnection);
+
+                    ordAdapter.InsertCommand.Parameters.Add("@id_product", OleDbType.Integer, 4, "id_product");
+                    ordAdapter.InsertCommand.Parameters.Add("@productCode", OleDbType.Integer, 20, "productCode");
+                    ordAdapter.InsertCommand.Parameters.Add("@nameProduct", OleDbType.VarChar, 50, "nameProduct");
+                    //ordAdapter.InsertCommand.Parameters.Add("@e_mail", OleDbType.VarChar, 50, "e_mail");
+
+                    AddProductWindow newProduct = new AddProductWindow(dataRow);
+                    newProduct.Owner = this;
+                    newProduct.ShowDialog();
+
+                    if (newProduct.DialogResult.Value)
+                    {
+                        customerOrders.Tables[1].Rows.Add(dataRow);
+                        ordAdapter.Update(customerOrders.Tables[1]);
+                    }
+                }
+                catch (Exception ex)
+                {
                     Console.WriteLine(ex.Message);
                     //MessageBox.Show(ex.Message);
                 }
             }
-
         }
 
         //-------------------LOAD-----------------------------------------------

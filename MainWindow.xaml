@@ -44,7 +44,8 @@
                     Margin="0 5"
                     Cursor="Hand" 
                     Padding="0" 
-                    ToolTip="Добавить клиента">
+                    ToolTip="Добавить клиента"
+                    Click="AddNewCustomerButton">
                 <materialDesign:PackIcon Kind="AccountPlusOutline" 
                                              Width="25" Height="25" 
                                              HorizontalAlignment="Center" 
@@ -77,7 +78,8 @@
                     Cursor="Hand" 
                     Margin="0 5"
                     Padding="0" 
-                    ToolTip="Добавить товар для выбранного клиента">
+                    ToolTip="Добавить товар для выбранного клиента"
+                    Click="AddProductButton">
                 <materialDesign:PackIcon Kind="AddCircleOutline" 
                                              Width="25" Height="25" 
                                              HorizontalAlignment="Center" 
