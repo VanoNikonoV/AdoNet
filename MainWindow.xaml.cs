@@ -23,13 +23,12 @@ namespace AdoNet
 
         private OleDbDataAdapter ordAdapter;
 
-        private DataTable table;
+ 
 
         private DataSet customerOrders;
 
         DataRowView row;
-
-        DataRowCollection rows;
+   
         #endregion
 
         public MainWindow()
@@ -37,8 +36,6 @@ namespace AdoNet
             custAdapter = new SqlDataAdapter();
 
             ordAdapter = new OleDbDataAdapter();
-
-            table = new DataTable();
 
             customerOrders = new DataSet();
 
@@ -49,7 +46,7 @@ namespace AdoNet
 
         public async Task Connection()
         {
-            string querySelect = $"SELECT * FROM customers"; //Order By customers.id
+            string querySelect = $"SELECT * FROM customers";
 
             using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString)) 
             {
@@ -91,13 +88,6 @@ namespace AdoNet
                 customerOrders.Relations.Add("CustOrders",
                 customerOrders.Tables["customers"].Columns[5],   //customerOrders.Tables[0].Columns["e_mail"],
                 customerOrders.Tables["oreders"].Columns[1]);     //customerOrders.Tables[1].Columns["e_mail"]);
-
-            //customerOrders.Tables["orders"].Columns[0].AutoIncrement = true;
-            //customerOrders.Tables["orders"].Columns[0].AutoIncrementSeed = ;
-            // Console.WriteLine(customerOrders.Tables[1].Columns[0].AutoIncrement);
-
-            //DataView sort = new DataView(customerOrders.Tables[1]);
-            //sort.Sort = "id_product ASC";
 
             gridView.DataContext = customerOrders.Tables[0].DefaultView;
             gridViewOrders.DataContext = customerOrders.Tables[1].DefaultView; //sort;
@@ -167,70 +157,77 @@ namespace AdoNet
 
         private void SelectProductButton(object sender, RoutedEventArgs e)
         {
-            var selectedRow = (DataRowView)gridView.SelectedItem;
+            var selectedRow = gridView.SelectedItem as DataRowView;
 
-            DataTable allProducts = new DataTable("allProducts");
-
-            DataColumn column;
-
-            DataRow row;
-
-            // первая колонка
-            column = new DataColumn();
-            column.DataType = System.Type.GetType("System.Int32");
-            column.ColumnName = "id_product";
-            column.ReadOnly = true;
-            column.Unique = true;
-            allProducts.Columns.Add(column);
-
-            //вторая колонка
-            column = new DataColumn();
-            column.DataType = System.Type.GetType("System.String");
-            column.ColumnName = "e_mail";
-            column.ReadOnly = true;
-            column.Unique = false;
-            allProducts.Columns.Add(column);
-
-            //трейтья колонка
-            column = new DataColumn();
-            column.DataType = System.Type.GetType("System.String");
-            column.ColumnName = "productCode";
-            column.ReadOnly = true;
-            column.Unique = true;
-            allProducts.Columns.Add(column);
-
-            //четвертая колонка
-            column = new DataColumn();
-            column.DataType = System.Type.GetType("System.String");
-            column.ColumnName = "nameProduct";
-            column.ReadOnly = true;
-            column.Unique = true;
-            allProducts.Columns.Add(column);
-
-            DataSet ds = new DataSet();
-
-            ds.Tables.Add(allProducts);
-
-            foreach (DataRow custRow in customerOrders.Tables["customers"].Rows)
+            if (selectedRow != null)
             {
-                if (selectedRow[0].Equals(custRow[0]))
+                DataTable allProducts = new DataTable("allProducts");
+
+                DataColumn column;
+
+                DataRow row;
+
+                // первая колонка
+                column = new DataColumn();
+                column.DataType = System.Type.GetType("System.Int32");
+                column.ColumnName = "id_product";
+                column.ReadOnly = true;
+                column.Unique = true;
+                allProducts.Columns.Add(column);
+
+                //вторая колонка
+                column = new DataColumn();
+                column.DataType = System.Type.GetType("System.String");
+                column.ColumnName = "e_mail";
+                column.ReadOnly = true;
+                column.Unique = false;
+                allProducts.Columns.Add(column);
+
+                //трейтья колонка
+                column = new DataColumn();
+                column.DataType = System.Type.GetType("System.String");
+                column.ColumnName = "productCode";
+                column.ReadOnly = true;
+                column.Unique = true;
+                allProducts.Columns.Add(column);
+
+                //четвертая колонка
+                column = new DataColumn();
+                column.DataType = System.Type.GetType("System.String");
+                column.ColumnName = "nameProduct";
+                column.ReadOnly = true;
+                column.Unique = true;
+                allProducts.Columns.Add(column);
+
+                DataSet ds = new DataSet();
+
+                ds.Tables.Add(allProducts);
+
+                foreach (DataRow custRow in customerOrders.Tables["customers"].Rows)
                 {
-                    foreach (DataRow orderRow in custRow.GetChildRows(customerOrders.Relations[0]))
+                    if (selectedRow[0].Equals(custRow[0]))
                     {
-                        row = allProducts.NewRow();
-                        row["id_product"] = orderRow[0];
-                        row["e_mail"] = orderRow[1];
-                        row["productCode"] = orderRow[2];  
-                        row["nameProduct"] = orderRow[3];
-                        allProducts.Rows.Add(row);
+                        foreach (DataRow orderRow in custRow.GetChildRows(customerOrders.Relations[0]))
+                        {
+                            row = allProducts.NewRow();
+                            row["id_product"] = orderRow[0];
+                            row["e_mail"] = orderRow[1];
+                            row["productCode"] = orderRow[2];
+                            row["nameProduct"] = orderRow[3];
+                            allProducts.Rows.Add(row);
+                        }
+                        break;
                     }
-                    break;
-                }              
+                }
+
+                SelectProductWindow AllProductsCuctomer = new SelectProductWindow(ds.Tables[0]);
+
+                AllProductsCuctomer.Show();
             }
-
-            SelectProductWindow AllProductsCuctomer = new SelectProductWindow(ds.Tables[0]);
-
-            AllProductsCuctomer.Show();
+            else MessageBox.Show(messageBoxText: "Выберите клиента!",
+                             caption: "Ощибка",
+                             MessageBoxButton.OK,
+                             icon: MessageBoxImage.Error);
         }
 
         /// <summary>
@@ -239,18 +236,6 @@ namespace AdoNet
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void EditcustomerButton(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
-        private void GVCellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
-        {
-            //var selectedRow = (DataRowView)gridView.SelectedItem;
-            row = (DataRowView)gridView.SelectedItem;
-            row.BeginEdit();
-        }
-
-        private void GVCurrentCellChanged(object sender, EventArgs e)
         {
             if (row == null) return;
 
@@ -274,7 +259,7 @@ namespace AdoNet
                     custAdapter.UpdateCommand.Parameters.Add("@name", SqlDbType.NVarChar, 50, "name");
                     custAdapter.UpdateCommand.Parameters.Add("@patronymic", SqlDbType.NVarChar, 50, "patronymic");
                     custAdapter.UpdateCommand.Parameters.Add("@telefon", SqlDbType.NVarChar, 11, "telefon");
-                    custAdapter.UpdateCommand.Parameters.Add("@e_mail", SqlDbType.NVarChar, 50, "e_mail"); 
+                    custAdapter.UpdateCommand.Parameters.Add("@e_mail", SqlDbType.NVarChar, 50, "e_mail");
 
                     row.EndEdit();
 
@@ -285,7 +270,52 @@ namespace AdoNet
                     MessageBox.Show(ex.Message);
                 }
             }
+
         }
+
+        private void GVCellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
+        {
+            row = gridView.SelectedItem as DataRowView;
+
+            if (row != null) { row.BeginEdit(); }
+        }
+
+        //private void GVCurrentCellChanged(object sender, EventArgs e)
+        //{
+        //    if (row == null) return;
+
+        //    using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString))
+        //    {
+        //        try
+        //        {
+        //            customerConnection.Open();
+
+        //            string sql = @"UPDATE customers SET 
+        //                            surname = @surname, 
+        //                            name = @name, 
+        //                            patronymic = @patronymic, 
+        //                            telefon = @telefon, 
+        //                            e_mail = @e_mail 
+        //                            WHERE id_user = @id_user";
+
+        //            custAdapter.UpdateCommand = new SqlCommand(sql, customerConnection);
+        //            custAdapter.UpdateCommand.Parameters.Add("@id_user", SqlDbType.NVarChar, 4, "id_user");
+        //            custAdapter.UpdateCommand.Parameters.Add("@surname", SqlDbType.NVarChar, 50, "surname");
+        //            custAdapter.UpdateCommand.Parameters.Add("@name", SqlDbType.NVarChar, 50, "name");
+        //            custAdapter.UpdateCommand.Parameters.Add("@patronymic", SqlDbType.NVarChar, 50, "patronymic");
+        //            custAdapter.UpdateCommand.Parameters.Add("@telefon", SqlDbType.NVarChar, 11, "telefon");
+        //            custAdapter.UpdateCommand.Parameters.Add("@e_mail", SqlDbType.NVarChar, 50, "e_mail"); 
+
+        //            row.EndEdit();
+
+        //            custAdapter.Update(customerOrders.Tables[0]);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show(ex.Message);
+        //        }
+        //    }
+        //}
 
         private void AddNewCustomerButton(object sender, RoutedEventArgs e)
         {
@@ -331,7 +361,7 @@ namespace AdoNet
 
         private void AddProductButton(object sender, RoutedEventArgs e)
         {
-            var selectedRow = (DataRowView)gridView.SelectedItem;
+            var selectedRow = (DataRowView)gridView?.SelectedItem;
 
             using (OleDbConnection orderConnection = new OleDbConnection(OledBConnectionString))
             {
@@ -340,19 +370,16 @@ namespace AdoNet
                     orderConnection.Open();
 
                     DataRow dataRow = customerOrders.Tables[1].NewRow();
-                    //DataRow[] dataRowsChild =  dataRow.GetChildRows("CustOrders");
 
                     dataRow[1] = selectedRow.Row[5];
 
                     string oleDd = @"INSERT INTO orders (e_mail, productCode, nameProduct) VALUES (?, ?, ?);";
-                    // (SELECT e_mail FROM customers WHERE e_mail ='1@mail.ru')
 
                     OleDbCommand command = new OleDbCommand(oleDd, orderConnection);
 
                     command.Parameters.Add("@id_product", OleDbType.Integer, 4, "id_product");
                     command.Parameters.Add("productCode", OleDbType.Integer, 20, "productCode");
                     command.Parameters.Add("nameProduct", OleDbType.VarChar, 50, "nameProduct");
-                    //ordAdapter.InsertCommand.Parameters.Add("@e_mail", OleDbType.VarChar, 50, "e_mail");
 
                     ordAdapter.InsertCommand = command;
 
@@ -368,8 +395,7 @@ namespace AdoNet
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
-                    //MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message);
                 }
             }
         }

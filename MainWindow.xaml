@@ -58,23 +58,6 @@
                     Style="{StaticResource MaterialDesignFlatButton}"
                     IsDefault="True"
                     Width="30" Height="30"
-                    Margin="0 5"
-                    Cursor="Hand" 
-                    Padding="0" 
-                    ToolTip="Удалить клиента"
-                    Click="DeletCustomerButton">
-                <materialDesign:PackIcon Kind="AccountCancel" 
-                                             Width="25" Height="25" 
-                                             HorizontalAlignment="Center" 
-                                             VerticalAlignment="Center" 
-                                             Foreground="#FF71B73A"/>
-            </Button>
-
-            <Button VerticalAlignment="Bottom" 
-                    HorizontalAlignment="Center"
-                    Style="{StaticResource MaterialDesignFlatButton}"
-                    IsDefault="True"
-                    Width="30" Height="30"
                     Cursor="Hand" 
                     Margin="0 5"
                     Padding="0" 
@@ -86,6 +69,25 @@
                                              VerticalAlignment="Center" 
                                              Foreground="#FF226DE7"/>
             </Button>
+
+            <Button VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    IsDefault="True"
+                    Width="30" Height="30"
+                    Margin="0 5"
+                    Cursor="Hand" 
+                    Padding="0" 
+                    ToolTip="Удалить клиента"
+                    Click="DeletCustomerButton">
+                <materialDesign:PackIcon Kind="AccountCancel" 
+                                             Width="25" Height="25" 
+                                             HorizontalAlignment="Center" 
+                                             VerticalAlignment="Center" 
+                                             Foreground="#FFB73A51"/>
+            </Button>
+
+           
 
             <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" 
                     Style="{StaticResource MaterialDesignFlatButton}"
@@ -135,19 +137,20 @@
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                  Margin="5 5"
                  Text="{Binding e_mail}"/>
-            <!--<Button VerticalAlignment="Bottom" 
+            
+            <Button VerticalAlignment="Bottom" 
                     HorizontalAlignment="Right"
                     IsDefault="True"
                     Width="60" Height="30"
                     Cursor="Hand" 
-                    ToolTip="Подтвердить изменения" Click="EditcustomerButton"
-                    >
+                    ToolTip="Подтвердить изменения" 
+                    Click="EditcustomerButton">
                 <materialDesign:PackIcon Kind="Edit" 
                                          Width="25" Height="25" 
                                          HorizontalAlignment="Center" 
                                          VerticalAlignment="Center" 
                                          Foreground="#FF71B73A"/>
-            </Button>-->
+            </Button>
 
         </StackPanel>
 
@@ -165,9 +168,10 @@
                   IsSynchronizedWithCurrentItem="True"
                   AutoGenerateColumns="False" 
                   ItemsSource="{Binding}"
-                  IsReadOnly="False"
-                  CurrentCellChanged="GVCurrentCellChanged"
+                  IsReadOnly="False" 
                   CellEditEnding="GVCellEditEnding">
+                <!--CurrentCellChanged="GVCurrentCellChanged"
+                  >-->
                 <DataGrid.Columns>
                     <DataGridTextColumn x:Name="id"
                                     Binding="{Binding id_user}"
@@ -177,22 +181,27 @@
                     <DataGridTextColumn x:Name="surname"
                                     Binding="{Binding surname}"
                                     Header="Фамилия"
+                                        IsReadOnly="True" 
                                     Width="120"/>
                     <DataGridTextColumn x:Name="name"
                                     Binding="{Binding name}"
-                                    Header="Имя" 
+                                    Header="Имя"
+                                        IsReadOnly="True" 
                                     Width="100"/>
                     <DataGridTextColumn x:Name="patronymic"
                                     Binding="{Binding patronymic}"
                                     Header="Отчество"
+                                        IsReadOnly="True" 
                                     Width="150"/>
                     <DataGridTextColumn x:Name="telefon"
                                     Binding="{Binding telefon}"
                                     Header="Телефон" 
+                                        IsReadOnly="True" 
                                     Width="120"/>
                     <DataGridTextColumn x:Name="e_mail"
                                     Binding="{Binding e_mail}"
                                     Header="E-mail" 
+                                        IsReadOnly="True" 
                                     Width="130"/>
                 </DataGrid.Columns>
 
