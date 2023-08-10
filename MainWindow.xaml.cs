@@ -49,7 +49,7 @@ namespace AdoNet
 
         public async Task Connection()
         {
-            string querySelect = $"select * FROM customers"; //Order By customers.id
+            string querySelect = $"SELECT * FROM customers"; //Order By customers.id
 
             using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString)) 
             {
@@ -65,7 +65,7 @@ namespace AdoNet
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e.Message);
+                    MessageBox.Show($"SQL " + e.Message);
                 }
             }
 
@@ -75,7 +75,7 @@ namespace AdoNet
                 {
                     await orderConnection.OpenAsync();
 
-                    OleDbCommand command = new OleDbCommand($"SELECT * FROM orders", orderConnection);
+                    OleDbCommand command = new OleDbCommand($"SELECT * FROM orders Order By orders.id_product", orderConnection);
 
                     ordAdapter.SelectCommand = command;
 
@@ -83,7 +83,7 @@ namespace AdoNet
 
                     ordAdapter.Fill(customerOrders.Tables[1]);
                 }
-                catch (Exception e) { Debug.WriteLine($"Access " + e.Message);}
+                catch (Exception e) { MessageBox.Show($"Access " + e.Message);}
                 
             }
 
@@ -94,12 +94,13 @@ namespace AdoNet
 
             //customerOrders.Tables["orders"].Columns[0].AutoIncrement = true;
             //customerOrders.Tables["orders"].Columns[0].AutoIncrementSeed = ;
+            // Console.WriteLine(customerOrders.Tables[1].Columns[0].AutoIncrement);
 
-            Console.WriteLine(customerOrders.Tables[1].Columns[0].AutoIncrementSeed);
-            //var constr = customerOrders.Tables[0].Select("id_user >5"); 
+            //DataView sort = new DataView(customerOrders.Tables[1]);
+            //sort.Sort = "id_product ASC";
 
             gridView.DataContext = customerOrders.Tables[0].DefaultView;
-            gridViewOrders.DataContext = customerOrders.Tables[1].DefaultView;
+            gridViewOrders.DataContext = customerOrders.Tables[1].DefaultView; //sort;
         }
 
         private void DeletCustomerButton(object sender, RoutedEventArgs e)
