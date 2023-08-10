@@ -181,27 +181,27 @@
                     <DataGridTextColumn x:Name="surname"
                                     Binding="{Binding surname}"
                                     Header="Фамилия"
-                                        IsReadOnly="True" 
+                                    IsReadOnly="True" 
                                     Width="120"/>
                     <DataGridTextColumn x:Name="name"
                                     Binding="{Binding name}"
                                     Header="Имя"
-                                        IsReadOnly="True" 
+                                    IsReadOnly="True" 
                                     Width="100"/>
                     <DataGridTextColumn x:Name="patronymic"
                                     Binding="{Binding patronymic}"
                                     Header="Отчество"
-                                        IsReadOnly="True" 
+                                    IsReadOnly="True" 
                                     Width="150"/>
                     <DataGridTextColumn x:Name="telefon"
                                     Binding="{Binding telefon}"
                                     Header="Телефон" 
-                                        IsReadOnly="True" 
+                                    IsReadOnly="True" 
                                     Width="120"/>
                     <DataGridTextColumn x:Name="e_mail"
                                     Binding="{Binding e_mail}"
                                     Header="E-mail" 
-                                        IsReadOnly="True" 
+                                    IsReadOnly="True" 
                                     Width="130"/>
                 </DataGrid.Columns>
 

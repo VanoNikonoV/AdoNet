@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdoNet.View"
         mc:Ignorable="d"
-        Title="Выборка продуктов" Height="450" Width="500">
+        Height="450" Width="500">
     <Grid>
         <Border Grid.Column="3" 
                 Background ="White" 

@@ -220,7 +220,7 @@ namespace AdoNet
                     }
                 }
 
-                SelectProductWindow AllProductsCuctomer = new SelectProductWindow(ds.Tables[0]);
+                SelectProductWindow AllProductsCuctomer = new SelectProductWindow(ds.Tables[0], selectedRow);
 
                 AllProductsCuctomer.Show();
             }

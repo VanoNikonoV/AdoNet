@@ -8,16 +8,21 @@ namespace AdoNet.View
     /// </summary>
     public partial class SelectProductWindow : Window
     {
-        private DataTable allProductsCustomer;
-        public SelectProductWindow(DataTable AllProductsCustomer)
+        public DataTable AllProductsCustomer { get;}
+
+        public DataRowView SelectedCustomer { get; }
+
+        public SelectProductWindow(DataTable allProductsCustomer, DataRowView selectedCustomer)
         {
-            allProductsCustomer = AllProductsCustomer;
+            this.AllProductsCustomer = allProductsCustomer;
+
+            this.SelectedCustomer = selectedCustomer;
             
             InitializeComponent();
 
+            this.Title = $"Выборка продуктов для {SelectedCustomer.Row[2]} {SelectedCustomer.Row[1]}";
+
             gridViewAllProducts.DataContext = AllProductsCustomer;
         }
-
-        
     }
 }
