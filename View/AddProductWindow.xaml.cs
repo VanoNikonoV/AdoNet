@@ -22,8 +22,13 @@ namespace AdoNet.View
 
         private void EnterButton(object sender, RoutedEventArgs e)
         {
-            _newProduct[1] = NameProductTextBox.Text;
+            _newProduct[3] = NameProductTextBox.Text;
             _newProduct[2] = CodeProductTextBox.Text;
+
+            foreach (var item in _newProduct.ItemArray)
+            {
+                System.Console.WriteLine(item); 
+            }
 
             this.DialogResult = true;
         }

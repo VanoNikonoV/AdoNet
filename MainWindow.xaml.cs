@@ -62,7 +62,6 @@ namespace AdoNet
                     custAdapter.SelectCommand = command;
 
                     custAdapter.Fill(customerOrders, "customers");
-
                 }
                 catch (Exception e)
                 {
@@ -76,23 +75,27 @@ namespace AdoNet
                 {
                     await orderConnection.OpenAsync();
 
-                    OleDbCommand command = new OleDbCommand($"select * FROM orders", orderConnection);
+                    OleDbCommand command = new OleDbCommand($"SELECT * FROM orders", orderConnection);
 
                     ordAdapter.SelectCommand = command;
 
-                    ordAdapter.Fill(customerOrders, "orders");
+                    ordAdapter.FillSchema(customerOrders, SchemaType.Source, "oreders");                    
+
+                    ordAdapter.Fill(customerOrders.Tables[1]);
                 }
-                catch (Exception e)
-                {
-                    Debug.WriteLine($"Access " + e.Message);
-                }
+                catch (Exception e) { Debug.WriteLine($"Access " + e.Message);}
                 
             }
+
             DataRelation customerOrdersRelation = 
                 customerOrders.Relations.Add("CustOrders",
                 customerOrders.Tables["customers"].Columns[5],   //customerOrders.Tables[0].Columns["e_mail"],
-                customerOrders.Tables["orders"].Columns[1]);     //customerOrders.Tables[1].Columns["e_mail"]);
+                customerOrders.Tables["oreders"].Columns[1]);     //customerOrders.Tables[1].Columns["e_mail"]);
 
+            //customerOrders.Tables["orders"].Columns[0].AutoIncrement = true;
+            //customerOrders.Tables["orders"].Columns[0].AutoIncrementSeed = ;
+
+            Console.WriteLine(customerOrders.Tables[1].Columns[0].AutoIncrementSeed);
             //var constr = customerOrders.Tables[0].Select("id_user >5"); 
 
             gridView.DataContext = customerOrders.Tables[0].DefaultView;
@@ -338,18 +341,19 @@ namespace AdoNet
                     DataRow dataRow = customerOrders.Tables[1].NewRow();
                     //DataRow[] dataRowsChild =  dataRow.GetChildRows("CustOrders");
 
-                    //dataRow[1] = selectedRow.Row[5];
+                    dataRow[1] = selectedRow.Row[5];
 
-                    string oleDd = @"INSERT INTO orders (e_mail, productCode, nameProduct) 
-                                           VALUES ((SELECT e_mail FROM customers WHERE e_mail ='1@mail.ru'), @productCode, @nameProduct) 
-                                           SET @id_product = @@IDENTITY";
+                    string oleDd = @"INSERT INTO orders (e_mail, productCode, nameProduct) VALUES (?, ?, ?);";
+                    // (SELECT e_mail FROM customers WHERE e_mail ='1@mail.ru')
 
-                    ordAdapter.InsertCommand = new OleDbCommand(oleDd, orderConnection);
+                    OleDbCommand command = new OleDbCommand(oleDd, orderConnection);
 
-                    ordAdapter.InsertCommand.Parameters.Add("@id_product", OleDbType.Integer, 4, "id_product");
-                    ordAdapter.InsertCommand.Parameters.Add("@productCode", OleDbType.Integer, 20, "productCode");
-                    ordAdapter.InsertCommand.Parameters.Add("@nameProduct", OleDbType.VarChar, 50, "nameProduct");
+                    command.Parameters.Add("@id_product", OleDbType.Integer, 4, "id_product");
+                    command.Parameters.Add("productCode", OleDbType.Integer, 20, "productCode");
+                    command.Parameters.Add("nameProduct", OleDbType.VarChar, 50, "nameProduct");
                     //ordAdapter.InsertCommand.Parameters.Add("@e_mail", OleDbType.VarChar, 50, "e_mail");
+
+                    ordAdapter.InsertCommand = command;
 
                     AddProductWindow newProduct = new AddProductWindow(dataRow);
                     newProduct.Owner = this;
