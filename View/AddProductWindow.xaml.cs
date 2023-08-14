@@ -4,7 +4,7 @@ using System.Windows;
 namespace AdoNet.View
 {
     /// <summary>
-    /// Логика взаимодействия для AddProductWindow.xaml
+    /// Окно для добавления нового продукта
     /// </summary>
     public partial class AddProductWindow : Window
     {
@@ -24,12 +24,6 @@ namespace AdoNet.View
         {
             _newProduct[3] = NameProductTextBox.Text;
             _newProduct[2] = CodeProductTextBox.Text;
-
-            foreach (var item in _newProduct.ItemArray)
-            {
-                System.Console.WriteLine(item); 
-            }
-
             this.DialogResult = true;
         }
 

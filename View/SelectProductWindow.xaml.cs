@@ -4,11 +4,11 @@ using System.Windows;
 namespace AdoNet.View
 {
     /// <summary>
-    /// Логика взаимодействия для SelectProductWindow.xaml
+    /// Окно выборки продуктов для выбранного клиента
     /// </summary>
     public partial class SelectProductWindow : Window
     {
-        public DataTable AllProductsCustomer { get;}
+        public DataTable AllProductsCustomer { get; }
 
         public DataRowView SelectedCustomer { get; }
 

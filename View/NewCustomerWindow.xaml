@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:AdoNet.View"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Новый клиент" Height="200" Width="350">
+        Height="160" Width="350" WindowStyle="None">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" 
                     Grid.Row="0" HorizontalAlignment="Center"

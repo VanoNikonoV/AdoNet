@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace AdoNet.View
 {
     /// <summary>
-    /// Логика взаимодействия для NewCustomerrWindow.xaml
+    /// Окно добавления нового покупателя
     /// </summary>
     public partial class NewCustomerWindow : Window
     {
