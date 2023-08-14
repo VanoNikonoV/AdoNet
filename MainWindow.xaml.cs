@@ -88,55 +88,6 @@ namespace AdoNet
             gridViewOrders.DataContext = customerOrders.Tables[1].DefaultView;
         }
 
-        public async Task Connection()
-        {
-            string querySelect = $"SELECT * FROM customers";
-
-            using (SqlConnection customerConnection = new SqlConnection(SqlConnectionString)) 
-            {
-                try
-                {
-                    await customerConnection.OpenAsync();
-
-                    SqlCommand command = new SqlCommand(querySelect, customerConnection);
-
-                    custAdapter.SelectCommand = command;
-
-                    custAdapter.Fill(customerOrders, "customers");
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show($"SQL " + e.Message);
-                }
-            }
-
-            using (OleDbConnection orderConnection = new OleDbConnection(OledBConnectionString))
-            {
-                try
-                {
-                    await orderConnection.OpenAsync();
-
-                    OleDbCommand command = new OleDbCommand($"SELECT * FROM orders Order By orders.id_product", orderConnection);
-
-                    ordAdapter.SelectCommand = command;
-
-                    ordAdapter.FillSchema(customerOrders, SchemaType.Source, "oreders");                    
-
-                    ordAdapter.Fill(customerOrders.Tables[1]);
-                }
-                catch (Exception e) { MessageBox.Show($"Access " + e.Message);}
-                
-            }
-
-            DataRelation customerOrdersRelation = 
-                customerOrders.Relations.Add("CustOrders",
-                customerOrders.Tables["customers"].Columns[5],   //customerOrders.Tables[0].Columns["e_mail"],
-                customerOrders.Tables["oreders"].Columns[1]);     //customerOrders.Tables[1].Columns["e_mail"]);
-
-            gridView.DataContext = customerOrders.Tables[0].DefaultView;
-            gridViewOrders.DataContext = customerOrders.Tables[1].DefaultView; //sort;
-        }
-
         private void DeletCustomerButton(object sender, RoutedEventArgs e)
         {
             this.DeleteCommand();
@@ -394,6 +345,7 @@ namespace AdoNet
 
                         OleDbCommand command = new OleDbCommand(oleDd, orderConnection);
 
+                        command.Parameters.Add("@e_mail", OleDbType.VarChar, 50, "e_mail");
                         command.Parameters.Add("@id_product", OleDbType.Integer, 4, "id_product");
                         command.Parameters.Add("productCode", OleDbType.Integer, 20, "productCode");
                         command.Parameters.Add("nameProduct", OleDbType.VarChar, 50, "nameProduct");
